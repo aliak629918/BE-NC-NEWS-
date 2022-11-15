@@ -45,14 +45,14 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toBeInstanceOf(Array);
-        body.forEach((articles) => {
+        expect(body.articles.length).toBeGreaterThan(0);
+        expect(body.articles).toBeInstanceOf(Array);
+        body.articles.forEach((articles) => {
           expect.objectContaining({
             article_id: expect.any(Number),
             title: expect.any(String),
             topic: expect.any(String),
             author: expect.any(String),
-            body: expect.any(String),
             created_at: expect.any(Number),
             votes: expect.any(Number),
             comment_count: expect.any(Number),
@@ -65,8 +65,7 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
-        expect(body).toBeSorted("created_at", { descending: true });
+        expect(body.articles).toBeSorted("created_at", { descending: true });
       });
   });
   it("404: should return path not found for invalid paths", () => {

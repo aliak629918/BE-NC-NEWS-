@@ -11,7 +11,7 @@ exports.fetchArticles = (sort_by = "created_at", order = "DESC") => {
   if (!validSortBy.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "invalid sort query" });
   }
-  let queryString = `SELECT articles.*, COUNT(comment_id)::INT AS comment_count FROM articles
+  let queryString = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, COUNT(comment_id)::INT AS comment_count FROM articles
   LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
 
   return db.query(queryString).then((result) => {

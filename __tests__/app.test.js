@@ -77,3 +77,38 @@ describe("/api/articles", () => {
       });
   });
 });
+
+describe("/api/articles/article_id", () => {
+  it("200: should respond with the specific article object with its properties ", () => {
+    return request(app)
+      .get(`/api/articles/1`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: expect.any(String),
+          votes: 100,
+        });
+      });
+  });
+  it("404: should respond with a 404 error if article_id does not exist ", () => {
+    return request(app)
+      .get(`/api/articles/9999999`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article Not Found!");
+      });
+  });
+  it("400: should respond with a 400 error if article_id is a bad request ", () => {
+    return request(app)
+      .get(`/api/articles/beans`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Request!");
+      });
+  });
+});

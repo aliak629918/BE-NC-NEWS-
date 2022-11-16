@@ -100,8 +100,15 @@ describe("/api/articles/article_id", () => {
       .get(`/api/articles/9999999`)
       .expect(404)
       .then(({ body }) => {
-        console.log(body);
         expect(body.msg).toBe("Article Not Found!");
+      });
+  });
+  it("400: should respond with a 400 error if article_id is a bad request ", () => {
+    return request(app)
+      .get(`/api/articles/beans`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Request!");
       });
   });
 });

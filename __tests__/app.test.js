@@ -122,6 +122,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.comments.length).toBeGreaterThan(0);
         body.comments.forEach((comment) => {
           expect.objectContaining({
+            article_id: 1,
             comment_id: expect.any(Number),
             author: expect.any(String),
             created_at: expect.any(Number),
@@ -129,6 +130,14 @@ describe("/api/articles/:article_id/comments", () => {
             body: expect.any(String),
           });
         });
+      });
+  });
+  it("200: responds with an empty array of when given an article_id with no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
       });
   });
   it("400: responds with 400 if article_id is invalid data type", () => {

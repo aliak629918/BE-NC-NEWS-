@@ -21,3 +21,21 @@ exports.fetchCommentsById = (id) => {
       return response.rows;
     });
 };
+
+exports.postComment = (id, body, username) => {
+  const validUsers = ["butter_bridge", "icellusedkars", "rogersop", "lurker"];
+  if (!username || !body) {
+    return Promise.reject({ status: 400, msg: "Invalid Request!" });
+  }
+  if (!validUsers.includes(username)) {
+    return Promise.reject({ status: 404, msg: "User Not Found!" });
+  }
+  return db
+    .query(
+      "INSERT INTO comments (article_id, body, author) VALUES  ($1, $2, $3) RETURNING *;",
+      [id, body, username]
+    )
+    .then((response) => {
+      return response.rows[0];
+    });
+};

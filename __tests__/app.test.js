@@ -183,18 +183,6 @@ describe("/api/articles/article_id/comments", () => {
             comment_id: expect.any(Number),
             created_at: expect.any(String),
           });
-          return db
-            .query("SELECT * FROM comments WHERE article_id = 2;")
-            .then((response) => {
-              expect(response.rows[0]).toEqual({
-                body: "string beans",
-                votes: 0,
-                author: "butter_bridge",
-                article_id: 2,
-                comment_id: expect.any(Number),
-                created_at: expect.any(Object),
-              });
-            });
         });
     });
     it("400: should respond with a 400 bad request if article_id is invalid", () => {

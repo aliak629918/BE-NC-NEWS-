@@ -112,3 +112,40 @@ describe("/api/articles/article_id", () => {
       });
   });
 });
+
+describe("/api/articles/:article_id/comments", () => {
+  it("200: should an array of comments for the given `article_id` of which each comment should have the following properties `comment_id` `votes` `created_at` `author` and `body`. comments should be served with the most recent comments first", () => {
+    return request(app)
+      .get(`/api/articles/1/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBeGreaterThan(0);
+        body.comments.forEach((comment) => {
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            author: expect.any(String),
+            created_at: expect.any(Number),
+            votes: expect.any(Number),
+            body: expect.any(String),
+          });
+        });
+      });
+  });
+  it("400: responds with 400 if article_id is invalid data type", () => {
+    return request(app)
+      .get("/api/articles/beans/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Request!");
+      });
+  });
+
+  it("404: responds with 404 if article_id does not exist", () => {
+    return request(app)
+      .get("/api/articles/999999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No Comments Exist!");
+      });
+  });
+});

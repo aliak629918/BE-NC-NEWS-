@@ -5,12 +5,19 @@ const {
   getArticles,
   getArticleId,
 } = require("./controllers/articles.controller");
-const { getCommentsById } = require("./controllers/comments.controller");
+const {
+  getCommentsById,
+  postComment,
+} = require("./controllers/comments.controller");
+
+app.use(express.json());
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleId);
 app.get("/api/articles/:article_id/comments", getCommentsById);
+
+app.post("/api/articles/:article_id/comments", postComment);
 
 app.use("/*", (req, res) => {
   res.status(404).send({ msg: "Path not found!" });

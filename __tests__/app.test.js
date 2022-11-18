@@ -244,6 +244,15 @@ describe("/api/articles/:article_id", () => {
           expect(body.article.votes).toBe(101);
         });
     });
+    it.only("200: should respond with no change in article when given an object { inc_votes: } ", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({})
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article.votes).toBe(100);
+        });
+    });
     it("400: should respond with a bad request if the inc_votes is an invalid data type ", () => {
       return request(app)
         .patch("/api/articles/1")

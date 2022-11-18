@@ -167,7 +167,7 @@ describe("/api/articles/:article_id/comments", () => {
   });
 });
 
-describe("/api/articles/article_id/comments", () => {
+describe("/api/articles/:article_id/comments", () => {
   describe("POST", () => {
     it("201: should take a username and body and respond with a posted comment ", () => {
       return request(app)
@@ -228,6 +228,56 @@ describe("/api/articles/article_id/comments", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("User Not Found!");
+        });
+    });
+  });
+});
+
+describe("/api/articles/:article_id", () => {
+  describe("PATCH", () => {
+    it("200: should respond with an updated article when given an object { inc_votes: newVotes } ", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article.votes).toBe(101);
+        });
+    });
+    it.only("200: should respond with no change in article when given an object { inc_votes: } ", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({})
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article.votes).toBe(100);
+        });
+    });
+    it("400: should respond with a bad request if the inc_votes is an invalid data type ", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: "beans" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid Request!");
+        });
+    });
+    it("400: should respond with a bad request if article_id is an invalid data type", () => {
+      return request(app)
+        .patch("/api/articles/beans")
+        .send({ inc_votes: 1 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid Request!");
+        });
+    });
+    it("404: should respond with a 404 not found if a non existing article_id is searched", () => {
+      return request(app)
+        .patch("/api/articles/99999")
+        .send({ inc_votes: 1 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Article Does Not Exist!");
         });
     });
   });

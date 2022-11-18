@@ -10,6 +10,7 @@ const {
   getCommentsById,
   postComment,
 } = require("./controllers/comments.controller");
+const { getUsers } = require("./controllers/users.controller");
 
 app.use(express.json());
 
@@ -17,6 +18,7 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleId);
 app.get("/api/articles/:article_id/comments", getCommentsById);
+app.get("/api/users", getUsers);
 
 app.post("/api/articles/:article_id/comments", postComment);
 

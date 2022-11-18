@@ -1,20 +1,35 @@
 const db = require("../db/connection");
 
-exports.fetchArticles = (sort_by = "created_at", order = "DESC") => {
+exports.fetchArticles = (sort_by = "created_at", order = "DESC", topic) => {
   const validOrder = ["ASC", "DESC"];
   const inputOrder = order.toUpperCase();
-  const validSortBy = ["title", "topic", "author", "created_at", "votes"];
+  const validSortBy = [
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
 
-  if (!validOrder.includes(order)) {
+  if (!validOrder.includes(inputOrder)) {
     return Promise.reject({ status: 400, msg: "invalid order query" });
   }
   if (!validSortBy.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "invalid sort query" });
   }
   let queryString = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, COUNT(comment_id)::INT AS comment_count FROM articles
-  LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+  LEFT JOIN comments ON comments.article_id = articles.article_id`;
 
-  return db.query(queryString).then((result) => {
+  const queryValue = [];
+  if (topic) {
+    queryString += ` WHERE topic = $1`;
+    queryValue.push(topic);
+  }
+  queryString += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+  queryString += ";";
+
+  return db.query(queryString, queryValue).then((result) => {
     return result.rows;
   });
 };

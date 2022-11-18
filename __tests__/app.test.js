@@ -82,6 +82,100 @@ describe("/api/articles", () => {
   });
 });
 
+describe("/api/articles (queries)", () => {
+  describe("GET", () => {
+    it("200: should respond with all the articles sorted by created date and descending by default", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).toBe(12);
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+          body.articles.forEach((articles) => {
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(Number),
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            });
+          });
+        });
+    });
+    it("200: should respond with all the articles sorted by created date and ascending order", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            ascending: true,
+          });
+        });
+    });
+    it("400: should throw 400 error when given an invalid order query", () => {
+      return request(app)
+        .get("/api/articles?order=beans")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("invalid order query");
+        });
+    });
+    it("200: should respond with all the articles sorted by votes in descending order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("votes", {
+            descending: true,
+          });
+        });
+    });
+    it("200: should respond with all the articles sorted by comment_count and in ascending order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=comment_count&order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("comment_count", {
+            ascending: true,
+          });
+        });
+    });
+    it("400: should throw 400 error when given an invalid sort_by query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=beans")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("invalid sort query");
+        });
+    });
+    it("200: should filter the articles array by the given topic cats", () => {
+      return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+          body.articles.forEach((article) => {
+            expect(article.topic).toBe("cats");
+          });
+        });
+    });
+    it("200: should give an empty array when given an invalid topic filter", () => {
+      return request(app)
+        .get("/api/articles?topic=beans")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toEqual([]);
+        });
+    });
+  });
+});
+
 describe("/api/articles/article_id", () => {
   describe("GET", () => {
     it("200: should respond with the specific article object with its properties ", () => {

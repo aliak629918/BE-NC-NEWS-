@@ -4,6 +4,7 @@ const { getTopics } = require("./controllers/topics.controller");
 const {
   getArticles,
   getArticleId,
+  patchArticle,
 } = require("./controllers/articles.controller");
 const {
   getCommentsById,
@@ -18,6 +19,8 @@ app.get("/api/articles/:article_id", getArticleId);
 app.get("/api/articles/:article_id/comments", getCommentsById);
 
 app.post("/api/articles/:article_id/comments", postComment);
+
+app.patch("/api/articles/:article_id", patchArticle);
 
 app.use("/*", (req, res) => {
   res.status(404).send({ msg: "Path not found!" });

@@ -244,7 +244,7 @@ describe("/api/articles/:article_id", () => {
           expect(body.article.votes).toBe(101);
         });
     });
-    it.only("200: should respond with no change in article when given an object { inc_votes: } ", () => {
+    it("200: should respond with no change in article when given an object { inc_votes: } ", () => {
       return request(app)
         .patch("/api/articles/1")
         .send({})
@@ -278,6 +278,35 @@ describe("/api/articles/:article_id", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("Article Does Not Exist!");
+        });
+    });
+  });
+});
+
+describe("/api/users", () => {
+  describe("GET", () => {
+    it("200: should return an array of user objects ", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Array);
+          expect(body.length).toBe(4);
+          body.forEach((user) => {
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            });
+          });
+        });
+    });
+    it("404: should return path not found for invalid paths", () => {
+      return request(app)
+        .get("/api/beans")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Path not found!");
         });
     });
   });

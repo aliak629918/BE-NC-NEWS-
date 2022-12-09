@@ -23,7 +23,7 @@ exports.fetchCommentsById = (id) => {
 };
 
 exports.postComment = (id, body, username) => {
-  const validUsers = ["butter_bridge", "icellusedkars", "rogersop", "lurker"];
+  const validUsers = ["butter_bridge", "icellusedkars", "rogersop", "lurker", "tickle122", "grumpy19", "happyamy2016", "cooljmessy", "weegembump", "jessjelly"];
   if (!username || !body) {
     return Promise.reject({ status: 400, msg: "Invalid Request!" });
   }
